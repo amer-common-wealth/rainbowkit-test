@@ -1,7 +1,7 @@
 import '@rainbow-me/rainbowkit/styles.css'
-import { http, WagmiProvider } from 'wagmi'
-import { base, baseSepolia, hardhat, bsc } from 'wagmi/chains'
+import { WagmiProvider } from 'wagmi'
 import {
+  base,
   mainnet,
   polygon,
   optimism,
@@ -15,15 +15,15 @@ import {
   RainbowKitAuthenticationProvider,
   RainbowKitProvider,
 } from '@rainbow-me/rainbowkit';
-import { signMessage } from '@wagmi/core'
+//import { signMessage } from '@wagmi/core'
 //import { getNonceMessage } from '@utils'
 import { createSiweMessage } from 'viem/siwe';
 import './App.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WalletButton } from '@rainbow-me/rainbowkit';
 
-const appName = 'Common Wealth'
-const walletConnectProjectId = 'de1061f729237482ee148e50d70d2cee'
+//const appName = 'Common Wealth'
+//const walletConnectProjectId = 'de1061f729237482ee148e50d70d2cee'
 
 const config = getDefaultConfig({
   appName: 'RainbowKit demo',
@@ -54,7 +54,7 @@ function App() {
       });
     },
   
-    verify: async ({ message, signature }) => {
+    verify: async () => {
       setAuthStatus("authenticated");
       return true;
     },
