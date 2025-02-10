@@ -7,7 +7,23 @@ import {
   optimism,
   arbitrum,
 } from 'wagmi/chains';
-import { useState } from 'react'
+import { useState, useLayoutEffect } from 'react'
+
+const useIsMobile = (): boolean => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useLayoutEffect(() => {
+    const updateSize = (): void => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', updateSize);
+    // updateSize();
+    return (): void => window.removeEventListener('resize', updateSize);
+  }, []);
+
+  return isMobile;
+};
+
 
 import { AuthenticationStatus, ConnectButton, getDefaultConfig } from '@rainbow-me/rainbowkit'
 import {
@@ -34,6 +50,7 @@ const config = getDefaultConfig({
 const queryClient = new QueryClient();
 
 function App() {
+  const isMobile = useIsMobile()
   const [authStatus, setAuthStatus] = useState<AuthenticationStatus>("unauthenticated");
 
   const authenticationAdapter = createAuthenticationAdapter({
@@ -71,6 +88,7 @@ function App() {
         <RainbowKitAuthenticationProvider
             adapter={authenticationAdapter}
             status={authStatus}
+            enabled={isMobile}
         >
           <RainbowKitProvider>
             <ConnectButton />
