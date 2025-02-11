@@ -1,5 +1,5 @@
 import '@rainbow-me/rainbowkit/styles.css'
-import { WagmiProvider } from 'wagmi'
+import { createConfig, http, useConnect, WagmiProvider } from 'wagmi'
 import {
   base,
   mainnet,
@@ -8,6 +8,7 @@ import {
   arbitrum,
 } from 'wagmi/chains';
 import { useState, useLayoutEffect } from 'react'
+import { baseSepolia, hardhat } from 'wagmi/chains'
 
 const useIsMobile = (): boolean => {
   const [isMobile, setIsMobile] = useState(false);
@@ -25,7 +26,7 @@ const useIsMobile = (): boolean => {
 };
 
 
-import { AuthenticationStatus, ConnectButton, getDefaultConfig } from '@rainbow-me/rainbowkit'
+import { AuthenticationStatus, ConnectButton, connectorsForWallets, getDefaultConfig } from '@rainbow-me/rainbowkit'
 import {
   createAuthenticationAdapter,
   RainbowKitAuthenticationProvider,
@@ -37,19 +38,36 @@ import { createSiweMessage } from 'viem/siwe';
 import './App.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WalletButton } from '@rainbow-me/rainbowkit';
+import { coinbaseWallet, metaMaskWallet, rabbyWallet, walletConnectWallet } from '@rainbow-me/rainbowkit/wallets'
 
 //const appName = 'Common Wealth'
 //const walletConnectProjectId = 'de1061f729237482ee148e50d70d2cee'
 
-const config = getDefaultConfig({
-  appName: 'RainbowKit demo',
-  projectId: 'YOUR_PROJECT_ID',
-  chains: [mainnet, polygon, optimism, arbitrum, base],
+const connectors = connectorsForWallets(
+  [
+    {
+      groupName: 'Recommended',
+      wallets: [metaMaskWallet, rabbyWallet, walletConnectWallet, coinbaseWallet],
+    },
+  ],
+  { appName: 'RainbowKit demo',
+  projectId: 'YOUR_PROJECT_ID', },
+);
+
+const config = createConfig({
+  connectors,
+  chains: [baseSepolia, hardhat, base],
+  transports: {
+    [baseSepolia.id]: http(),
+    [hardhat.id]: http(),
+    [base.id]: http(),
+  },
 });
 
 const queryClient = new QueryClient();
 
 function App() {
+  const { connectors } = useConnect()
   const isMobile = useIsMobile()
   const [authStatus, setAuthStatus] = useState<AuthenticationStatus>("unauthenticated");
 
@@ -91,6 +109,24 @@ function App() {
             enabled={isMobile}
         >
           <RainbowKitProvider>
+
+            {
+              connectors
+              .filter(connector => {
+                if ((connector as any).rkDetails.id === 'walletConnect') {
+                  return !!(connector?.rkDetails as { showQrModal?: boolean })?.showQrModal
+                }
+                return true;
+              })
+              .map((connector: any) => {
+                return (
+                  <button key={connector.rkDetails.id} onClick={connector.connect}>
+                    { connector.name } { connector.rkDetails.id }
+                  </button>
+                )
+              })
+            }
+
             <ConnectButton />
             <WalletButton wallet='metamask' />
           </RainbowKitProvider>
