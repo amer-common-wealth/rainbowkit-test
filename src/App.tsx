@@ -66,8 +66,30 @@ const config = createConfig({
 
 const queryClient = new QueryClient();
 
-function App() {
+const Connectors = () => {
   const { connectors } = useConnect()
+
+  return <>
+    {
+      connectors
+        .filter(connector => {
+          if ((connector as any).rkDetails.id === 'walletConnect') {
+            return !!(connector?.rkDetails as { showQrModal?: boolean })?.showQrModal
+          }
+          return true;
+        })
+        .map((connector: any) => {
+          return (
+            <button key={connector.rkDetails.id} onClick={connector.connect}>
+              { connector.name } { connector.rkDetails.id }
+            </button>
+          )
+      })
+    }
+  </>       
+}
+
+function App() {
   const isMobile = useIsMobile()
   const [authStatus, setAuthStatus] = useState<AuthenticationStatus>("unauthenticated");
 
@@ -110,22 +132,7 @@ function App() {
         >
           <RainbowKitProvider>
 
-            {
-              connectors
-              .filter(connector => {
-                if ((connector as any).rkDetails.id === 'walletConnect') {
-                  return !!(connector?.rkDetails as { showQrModal?: boolean })?.showQrModal
-                }
-                return true;
-              })
-              .map((connector: any) => {
-                return (
-                  <button key={connector.rkDetails.id} onClick={connector.connect}>
-                    { connector.name } { connector.rkDetails.id }
-                  </button>
-                )
-              })
-            }
+            <Connectors />
 
             <ConnectButton />
             <WalletButton wallet='metamask' />
