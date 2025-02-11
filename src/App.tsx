@@ -2,10 +2,10 @@ import '@rainbow-me/rainbowkit/styles.css'
 import { createConfig, http, useConnect, WagmiProvider } from 'wagmi'
 import {
   base,
-  mainnet,
-  polygon,
-  optimism,
-  arbitrum,
+  //mainnet,
+  //polygon,
+  //optimism,
+  //arbitrum,
 } from 'wagmi/chains';
 import { useState, useLayoutEffect } from 'react'
 import { baseSepolia, hardhat } from 'wagmi/chains'
