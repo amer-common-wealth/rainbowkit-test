@@ -26,7 +26,7 @@ const useIsMobile = (): boolean => {
 };
 
 
-import { AuthenticationStatus, ConnectButton, connectorsForWallets, getDefaultConfig } from '@rainbow-me/rainbowkit'
+import { AuthenticationStatus, ConnectButton, connectorsForWallets } from '@rainbow-me/rainbowkit'
 import {
   createAuthenticationAdapter,
   RainbowKitAuthenticationProvider,
