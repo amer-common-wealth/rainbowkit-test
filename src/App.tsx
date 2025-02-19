@@ -1,16 +1,9 @@
 import '@rainbow-me/rainbowkit/styles.css'
-import { http, WagmiProvider } from 'wagmi'
-import {
-  base,
-  //mainnet,
-  //polygon,
-  //optimism,
-  //arbitrum,
-} from 'wagmi/chains';
+import { http, useConnect, WagmiProvider } from 'wagmi'
 import { useState, useLayoutEffect } from 'react'
-import { baseSepolia, hardhat } from 'wagmi/chains'
+import { mainnet, sepolia } from 'wagmi/chains';
 
-import { AuthenticationStatus, ConnectButton, getDefaultConfig } from '@rainbow-me/rainbowkit'
+import { AuthenticationStatus, ConnectButton, getDefaultConfig, useConnectModal } from '@rainbow-me/rainbowkit'
 import {
   createAuthenticationAdapter,
   RainbowKitAuthenticationProvider,
@@ -24,8 +17,18 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WalletButton } from '@rainbow-me/rainbowkit';
 import { coinbaseWallet, metaMaskWallet, rabbyWallet, walletConnectWallet } from '@rainbow-me/rainbowkit/wallets'
 
-//const appName = 'Common Wealth'
-//const walletConnectProjectId = 'de1061f729237482ee148e50d70d2cee'
+//export const appName = 'Common Wealth'
+//export const appName = 'Commonwealth-test'
+//export const appName = 'localhost-app'
+export const appName = 'vercel-test'
+
+
+//const network = import.meta.env.VITE_NETWORK || 'testnet'
+
+//export const walletConnectProjectId = import.meta.env.VITE_WALLET_CONNECT_PROJECT_ID
+//export const walletConnectProjectId = '5c1a0b855c2a469a99514f6cc758ccd1'
+//export const walletConnectProjectId = 'a7554c74977a37a57d9232369ecb89b4' // localhost
+export const walletConnectProjectId = 'b699d6a1ef7321c28f4d9d1b0355df4d' // localhost-home
 
 
 const useIsMobile = (): boolean => {
@@ -44,13 +47,12 @@ const useIsMobile = (): boolean => {
 };
 
 const config = getDefaultConfig({
-  appName: 'RainbowKit demo',
-  projectId: 'YOUR_PROJECT_ID',
-  chains: [baseSepolia, hardhat, base],
+  appName: appName,
+  projectId: walletConnectProjectId,
+  chains: [mainnet, sepolia],
   transports: {
-    [baseSepolia.id]: http(),
-    [hardhat.id]: http(),
-    [base.id]: http(),
+    [mainnet.id]: http(),
+    [sepolia.id]: http(),
   },
   wallets: [{
       groupName: 'Popular',
@@ -61,10 +63,57 @@ const config = getDefaultConfig({
         rabbyWallet
       ],
     }
-  ]
+  ],
+  ssr: false
 });
 
 const queryClient = new QueryClient();
+
+const Connectors = () => {
+  return (
+    <>
+      {['metamask', 'coinbase', 'walletConnect', 'rabby'].map((connector) => {
+        return <WalletButton.Custom key={connector} wallet={connector}>
+          {
+            ({ connect }) => (
+              <button onClick={connect}>{connector}</button>
+            )
+          }
+        </WalletButton.Custom>;
+      })}
+    </>
+  )
+}
+
+const ConnectorsWagmi = () => {
+  const { openConnectModal } = useConnectModal()
+  const { connect } = useConnect({
+    mutation: {
+      onSuccess(data) {
+        console.log('SUCCESS', data);
+        openConnectModal?.()
+      },
+      onError(error) {
+        console.error('ERROR', error);
+      },
+    }
+  })
+  return (
+    <>
+      {['metamask', 'coinbase', 'walletConnect', 'rabby'].map((key) => {
+        return <WalletButton.Custom key={key} wallet={key}>
+          {
+            ({ connector }) => (
+              <button onClick={() => {
+                connect({ connector } as any)
+              }}>wagmi {key}</button>
+            )
+          }
+        </WalletButton.Custom>;
+      })}
+    </>
+  )
+}
 
 function App() {
   const isMobile = useIsMobile()
@@ -109,15 +158,9 @@ function App() {
         >
           <RainbowKitProvider>
 
-          {['metamask', 'coinbase', 'walletConnect', 'rabby'].map((connector) => {
-            return <WalletButton.Custom key={connector} wallet={connector}>
-              {
-                ({ connect }) => (
-                  <button onClick={connect}>{connector}</button>
-                )
-              }
-            </WalletButton.Custom>;
-          })}
+            <Connectors />
+            <hr/>
+            <ConnectorsWagmi />
 
             <ConnectButton />
             <WalletButton wallet='metamask' />
