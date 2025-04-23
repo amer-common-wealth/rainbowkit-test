@@ -1,6 +1,8 @@
 import '@rainbow-me/rainbowkit/styles.css'
 import { http, useConnect, WagmiProvider } from 'wagmi'
-import { useState, useLayoutEffect } from 'react'
+import { useState, 
+  //useLayoutEffect
+ } from 'react'
 import { mainnet, sepolia, base } from 'wagmi/chains';
 
 import { AuthenticationStatus, ConnectButton, getDefaultConfig, useConnectModal } from '@rainbow-me/rainbowkit'
