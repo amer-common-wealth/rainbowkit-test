@@ -101,7 +101,7 @@ const Connectors = () => {
                 console.log('connector2', connector2)
 
                 if (connector2.id === 'phantom' && !isInPhantomApp) { 
-                  const phantomDeepLink = `https://phantom.app/ul/browse/${encodeURIComponent(document.location.href)}?ref=${encodeURIComponent(document.location.href)}`
+                  const phantomDeepLink = `https://phantom.app/ul/browse/${encodeURIComponent(document.location.href)}?ref=${encodeURIComponent(document.location.href)}?testing=true`
                   window.location.href = phantomDeepLink
                   return
                  }
