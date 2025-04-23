@@ -4,7 +4,6 @@ import { useState,
   //useLayoutEffect
  } from 'react'
 import { mainnet, sepolia, base } from 'wagmi/chains';
-
 import { AuthenticationStatus, ConnectButton, getDefaultConfig, useConnectModal } from '@rainbow-me/rainbowkit'
 import {
   createAuthenticationAdapter,
@@ -152,12 +151,12 @@ function App() {
 
   const authenticationAdapter = createAuthenticationAdapter({
     getNonce: async () => {
-      debugger
+      alert('getNonce')
       return "testing123456";
     },
   
     createMessage: ({ nonce, address, chainId }) => {
-      debugger
+      alert('createMessage')
       console.log('here', nonce, address, chainId)
       return createSiweMessage({
         domain: window.location.host,
@@ -172,6 +171,7 @@ function App() {
   
     verify: async () => {
       setAuthStatus("authenticated");
+      window.location.href = 'https://www.google.com'
       return true;
     },
   
