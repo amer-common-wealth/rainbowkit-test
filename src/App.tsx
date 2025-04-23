@@ -47,20 +47,20 @@ export const getWalletEnvironment = () => {
   }
 }
 
-const useIsMobile = (): boolean => {
-  const [isMobile, setIsMobile] = useState(false);
+// const useIsMobile = (): boolean => {
+//   const [isMobile, setIsMobile] = useState(false);
 
-  useLayoutEffect(() => {
-    const updateSize = (): void => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    window.addEventListener('resize', updateSize);
-    // updateSize();
-    return (): void => window.removeEventListener('resize', updateSize);
-  }, []);
+//   useLayoutEffect(() => {
+//     const updateSize = (): void => {
+//       setIsMobile(window.innerWidth < 768);
+//     };
+//     window.addEventListener('resize', updateSize);
+//     // updateSize();
+//     return (): void => window.removeEventListener('resize', updateSize);
+//   }, []);
 
-  return isMobile;
-};
+//   return isMobile;
+// };
 
 const config = getDefaultConfig({
   appName: appName,
@@ -145,7 +145,7 @@ const ConnectorsWagmi = () => {
 }
 
 function App() {
-  const isMobile = useIsMobile()
+  //const isMobile = useIsMobile()
   const [authStatus, setAuthStatus] = useState<AuthenticationStatus>("unauthenticated");
 
   const authenticationAdapter = createAuthenticationAdapter({
