@@ -1,7 +1,7 @@
 import '@rainbow-me/rainbowkit/styles.css'
 import { http, useConnect, WagmiProvider } from 'wagmi'
 import { useState, useLayoutEffect } from 'react'
-import { mainnet, sepolia } from 'wagmi/chains';
+import { mainnet, sepolia, base } from 'wagmi/chains';
 
 import { AuthenticationStatus, ConnectButton, getDefaultConfig, useConnectModal } from '@rainbow-me/rainbowkit'
 import {
@@ -65,8 +65,9 @@ const useIsMobile = (): boolean => {
 const config = getDefaultConfig({
   appName: appName,
   projectId: walletConnectProjectId,
-  chains: [mainnet, sepolia],
+  chains: [base, mainnet, sepolia],
   transports: {
+    [base.id]: http(),
     [mainnet.id]: http(),
     [sepolia.id]: http(),
   },
