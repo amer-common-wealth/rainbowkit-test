@@ -30,6 +30,22 @@ export const appName = 'vercel-test'
 //export const walletConnectProjectId = 'a7554c74977a37a57d9232369ecb89b4' // localhost
 export const walletConnectProjectId = 'b699d6a1ef7321c28f4d9d1b0355df4d' // localhost-home
 
+export const getWalletEnvironment = () => {
+  const userAgent = navigator.userAgent
+
+  // Check if inside Phantom's in-app browser
+  const isInPhantomApp =
+    userAgent.includes('Phantom') || (window as any)?.phantom?.ethereum?.isPhantom
+
+  // Check if on mobile
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(userAgent)
+
+  return {
+    isInPhantomApp,
+    isMobile,
+    isDesktop: !isMobile,
+  }
+}
 
 const useIsMobile = (): boolean => {
   const [isMobile, setIsMobile] = useState(false);
@@ -78,8 +94,10 @@ const Connectors = () => {
           {
             ({ connect, connector: connector2 }) => (
               <button onClick={() => {
+                const { isInPhantomApp } = getWalletEnvironment()
                 console.log('connector2', connector2)
-                if (connector2.id === 'phantom') { 
+
+                if (connector2.id === 'phantom' && !isInPhantomApp) { 
                   const phantomDeepLink = `https://phantom.app/ul/browse/${encodeURIComponent(document.location.href)}?ref=${encodeURIComponent(document.location.href)}`
                   window.location.href = phantomDeepLink
                   return
