@@ -103,6 +103,7 @@ const Connectors = () => {
                   window.location.href = phantomDeepLink
                   return
                  }
+                 
                 connect()
               }}>{connector2.name}</button>
             )
@@ -149,10 +150,12 @@ function App() {
 
   const authenticationAdapter = createAuthenticationAdapter({
     getNonce: async () => {
+      debugger
       return "testing123456";
     },
   
     createMessage: ({ nonce, address, chainId }) => {
+      debugger
       console.log('here', nonce, address, chainId)
       return createSiweMessage({
         domain: window.location.host,
@@ -182,7 +185,7 @@ function App() {
         <RainbowKitAuthenticationProvider
             adapter={authenticationAdapter}
             status={authStatus}
-            enabled={isMobile}
+            enabled={true}
         >
           <RainbowKitProvider>
 
