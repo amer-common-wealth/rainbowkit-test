@@ -15,7 +15,7 @@ import { createSiweMessage } from 'viem/siwe';
 import './App.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { WalletButton } from '@rainbow-me/rainbowkit';
-import { coinbaseWallet, metaMaskWallet, rabbyWallet, walletConnectWallet } from '@rainbow-me/rainbowkit/wallets'
+import { coinbaseWallet, metaMaskWallet, rabbyWallet, walletConnectWallet, phantomWallet } from '@rainbow-me/rainbowkit/wallets'
 
 //export const appName = 'Common Wealth'
 //export const appName = 'Commonwealth-test'
@@ -60,7 +60,8 @@ const config = getDefaultConfig({
         metaMaskWallet,
         coinbaseWallet,
         walletConnectWallet,
-        rabbyWallet
+        rabbyWallet,
+        phantomWallet
       ],
     }
   ],
@@ -72,11 +73,19 @@ const queryClient = new QueryClient();
 const Connectors = () => {
   return (
     <>
-      {['metamask', 'coinbase', 'walletConnect', 'rabby'].map((connector) => {
+      {['metamask', 'coinbase', 'walletConnect', 'rabby', 'phantom'].map((connector) => {
         return <WalletButton.Custom key={connector} wallet={connector}>
           {
-            ({ connect }) => (
-              <button onClick={connect}>{connector}</button>
+            ({ connect, connector: connector2 }) => (
+              <button onClick={() => {
+                console.log('connector2', connector2)
+                if (connector2.id === 'phantom') { 
+                  const phantomDeepLink = `https://phantom.app/ul/browse/${encodeURIComponent(document.location.href)}?ref=${encodeURIComponent(document.location.href)}`
+                  window.location.href = phantomDeepLink
+                  return
+                 }
+                connect()
+              }}>{connector2.name}</button>
             )
           }
         </WalletButton.Custom>;
@@ -158,8 +167,10 @@ function App() {
         >
           <RainbowKitProvider>
 
+            <p>Ranbowkit Connectors</p>
             <Connectors />
             <hr/>
+            <p>Wagmi Connectors</p>
             <ConnectorsWagmi />
 
             <ConnectButton />
