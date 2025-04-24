@@ -1,4 +1,5 @@
 import '@rainbow-me/rainbowkit/styles.css'
+import { detect } from 'detect-browser'
 import { http, useConnect, WagmiProvider } from 'wagmi'
 import { useState, 
   //useLayoutEffect
@@ -48,6 +49,23 @@ export const getWalletEnvironment = () => {
   }
 }
 
+export function isMobile() {
+  return isIOS() || isAndroid()
+}
+
+export function isAndroid() {
+  const browser = detect()
+
+  return browser?.os?.toLowerCase().includes('android')
+}
+
+export function isIOS() {
+  const browser = detect()
+
+  return browser?.os?.toLowerCase().includes('ios')
+}
+
+
 // const useIsMobile = (): boolean => {
 //   const [isMobile, setIsMobile] = useState(false);
 
@@ -89,6 +107,7 @@ const config = getDefaultConfig({
 const queryClient = new QueryClient();
 
 const Connectors = () => {
+  const mobile = isMobile()
   return (
     <>
       {['metamask', 'coinbase', 'walletConnect', 'rabby', 'phantom'].map((connector) => {
@@ -99,12 +118,17 @@ const Connectors = () => {
                 const { isInPhantomApp } = getWalletEnvironment()
                 console.log('connector2', connector2)
 
-                if (connector2.id === 'phantom' && !isInPhantomApp) { 
-                  const phantomDeepLink = `https://phantom.app/ul/browse/${encodeURIComponent(document.location.href)}?ref=${encodeURIComponent(`${document.location.href}`)}`
-                  window.location.href = phantomDeepLink
-                  return
-                 }
+                if (mobile) {
+                  alert('mobile')
+                  if (connector2.id === 'phantom' && !isInPhantomApp) { 
+                    alert('phantom')
+                    const phantomDeepLink = `https://phantom.app/ul/browse/${encodeURIComponent(document.location.href)}?ref=${encodeURIComponent(`${document.location.href}`)}`
+                    window.location.href = phantomDeepLink
+                    return
+                  }
+                }
                  
+                alert('not mobile')
                 connect()
               }}>{connector2.name}</button>
             )
